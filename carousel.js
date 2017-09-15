@@ -107,71 +107,8 @@ Sls.prototype.automaticScrollSlides = function(isScroll, timeNextScroll = null) 
 };
 */
 
-
 /**
  * Sls.prototype.offsetSlide - Смещает слайды
- */
- /*
-Sls.prototype.offsetSlide = function(where) {
-  var leftValue = new Array(); // Значения left слайдеров
-  var width = document.querySelectorAll("#"+Slider._properties.NameCarousel+" .sliders");
-  if(width[0].style.left != "" && width[0].style.left != undefined) {
-    for (var i = 0; i < width.length; i++) {
-      for (var j = 0; j < width[i].style.left.length; j++) {
-        if(!isNaN(width[i].style.left[j])) {
-          leftValue[i] != undefined ? leftValue[i] += width[i].style.left[j].toString() : leftValue[i] = width[i].style.left[j].toString();
-        }
-      }
-    }
-  } else {
-    for (var i = 0; i < width.length; i++) {
-      leftValue[i] = 0;
-    }
-  }
-  leftValue.forEach(function(item, i, arr) {
-    leftValue[i] = Number(item);
-  });
-
-  console.log(leftValue);
-  console.log(((Slider._properties.CurrentValueOffset-Slider._properties.CurrentValueOffset-Slider._properties.CurrentValueOffset)+"px"));
-
-  if(Slider._properties.isPlayingAnimation == false) {
-    if(where == "left") {
-      Slider._properties.isPlayingAnimation = true;
-      Slider._properties.TimerAutomaticSrollSlides = setInterval(function() {
-        if(((Slider._properties.CurrentValueOffset-Slider._properties.CurrentValueOffset-Slider._properties.CurrentValueOffset)+"px") != width[0].style.width) {
-          Slider._properties.CurrentValueOffset-= 5;
-          for (var i = 0; i < width.length; i++) {
-            leftValue[i] -= Slider._properties.CurrentValueOffset;
-            width[i].style.left = leftValue[i]+"px";
-          }
-        } else {
-          Slider._properties.CurrentValueOffset = 0;
-          Slider._properties.isPlayingAnimation = false;
-          clearInterval(Slider._properties.TimerAutomaticSrollSlides);
-        }
-      }, 20);
-    } else if(where == "right") {
-      Slider._properties.isPlayingAnimation = true;
-      Slider._properties.TimerAutomaticSrollSlides = setInterval(function() {
-        if(Slider._properties.CurrentValueOffset+"px" != width[0].style.width) {
-          Slider._properties.CurrentValueOffset+= 5;
-          for (var i = 0; i < width.length; i++) {
-            width[i].style.left += Slider._properties.CurrentValueOffset+"px"; // Заменить
-          }
-        } else {
-          Slider._properties.CurrentValueOffset = 0;
-          Slider._properties.isPlayingAnimation = false;
-          clearInterval(Slider._properties.TimerAutomaticSrollSlides);
-        }
-      }, 20);
-    }
-  }
-};
-*/
-
-/**
- * Sls.prototype.offsetSlide - Смещает слайды_v2
  */
 Sls.prototype.offsetSlide = function(where) {
   var width = document.querySelectorAll("#"+Slider._properties.NameCarousel+" .sliders"),
@@ -190,6 +127,7 @@ Sls.prototype.offsetSlide = function(where) {
   if(!Slider._properties.isPlayingAnimation) {
     if(where == "left") {
       Slider._properties.CurrentSlide++;
+      //Slider.checkCurrentSlide();
       Slider._properties.isPlayingAnimation = true;
       Slider._properties.TimerOffsetSlide = setInterval(function() {
         if((Slider._properties.CurrentValueOffset-Slider._properties.CurrentValueOffset-Slider._properties.CurrentValueOffset) < (Slider._properties.WidthSlide*Slider._properties.CurrentSlide)) { // Превращаем из отрицательного числа в положительное и сравниваем
@@ -204,12 +142,46 @@ Sls.prototype.offsetSlide = function(where) {
         }
       }, 20);
     } else if(where == "right") {
-
+      Slider._properties.CurrentSlide--;
+      Slider._properties.isPlayingAnimation = true;
+      Slider._properties.TimerOffsetSlide = setInterval(function() {
+        //if()
+      }, 20);
     }
   } else {
     throw new Error("Slider now offset");
   }
 };
+
+
+/**
+ * Sls.prototype.checkCurrentSlide - Для проверки колл-во слайдов (Переписать)
+ */
+Sls.prototype.checkCurrentSlide = function() {
+  var sliders = document.querySelectorAll("#"+Slider._properties.NameCarousel+" .sliders"),
+      main = document.getElementById(Slider._properties.NameCarousel),
+      transformationToNumber = null;
+
+  var ss = sliders[0].cloneNode(true);
+  if(Slider._properties.CurrentSlide == Slider._properties.CountSlides) {
+      for (var i = 0; i < ss.style.left.length; i++) {
+        if(!isNaN(ss.style.left[i]) || ss.style.left[i] == "-") {
+          transformationToNumber == null ? transformationToNumber = ss.style.left[i].toString() : transformationToNumber += ss.style.left[i].toString();
+        }
+      }
+      transformationToNumber = Number(transformationToNumber);
+      console.log("до", transformationToNumber);
+      console.log("Slider._properties.WidthSlide", Slider._properties.WidthSlide);
+      transformationToNumber = transformationToNumber-Slider._properties.WidthSlide;
+      console.log("после", transformationToNumber);
+      ss.style.left = transformationToNumber+"px";
+      main.firstChild.appendChild(ss);
+      return true;
+  } else if(Slider._properties.CurrentSlide < 1) { // Переписать
+
+  }
+  return false;
+}
 
 /**
  * Sls.prototype.checkCountSliders - Считает колл-во слайдов
