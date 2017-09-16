@@ -142,10 +142,21 @@ Sls.prototype.offsetSlide = function(where) {
         }
       }, 20);
     } else if(where == "right") {
+      if(Slider._properties.CurrentSlide == 0) // Переписать
+        throw new Error("Slider._properties.CurrentSlide = 0");
       Slider._properties.CurrentSlide--;
       Slider._properties.isPlayingAnimation = true;
       Slider._properties.TimerOffsetSlide = setInterval(function() {
-        //if()
+        if((Slider._properties.CurrentValueOffset-Slider._properties.CurrentValueOffset-Slider._properties.CurrentValueOffset) > (Slider._properties.WidthSlide*Slider._properties.CurrentSlide)) { // Превращаем из отрицательного числа в положительное и сравниваем
+          Slider._properties.CurrentValueOffset += countPixels;
+          leftValue += countPixels;
+          for (var i = 0; i < width.length; i++) {
+            width[i].style.left = leftValue+"px";
+          }
+        } else {
+          Slider._properties.isPlayingAnimation = false;
+          clearInterval(Slider._properties.TimerOffsetSlide);
+        }
       }, 20);
     }
   } else {
